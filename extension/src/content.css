@@ -1,0 +1,36 @@
+/* Styles for auto-grader buttons injected into Google Classroom */
+
+.auto-grade-btn {
+    background-color: #1a73e8 !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    margin: 5px !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    transition: background-color 0.2s !important;
+}
+
+.auto-grade-btn:hover {
+    background-color: #1557b0 !important;
+}
+
+.auto-grade-btn:disabled {
+    background-color: #dadce0 !important;
+    cursor: not-allowed !important;
+}
+
+.auto-grader-result {
+    background-color: #e8f0fe !important;
+    border: 1px solid #1a73e8 !important;
+    border-radius: 4px !important;
+    padding: 12px !important;
+    margin: 10px 0 !important;
+    font-family: 'Google Sans', Arial, sans-serif !important;
+}
+
+.auto-grader-result strong {
+    color: #1a73e8 !important;
+}

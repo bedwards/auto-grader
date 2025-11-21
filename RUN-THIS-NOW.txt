@@ -1,0 +1,60 @@
+🚀 DEPLOY CLASSROOM ADD-ON FOR KELLEY - RUN THESE COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Authenticate with Google Cloud
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
+gcloud auth login
+
+(This will open your browser - sign in with Google)
+
+
+STEP 2: Set or Create Project
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# List existing projects:
+gcloud projects list
+
+# OR create new one:
+gcloud projects create classroom-auto-grader-$(date +%s) --name="Classroom Auto-Grader"
+
+# Set the project (replace with YOUR project ID):
+gcloud config set project YOUR_PROJECT_ID_HERE
+
+
+STEP 3: Run the Deploy Script
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+cd /Users/bedwards/auto-grader
+./scripts/deploy-addon.sh
+
+(Takes 3-5 minutes - script does everything automatically!)
+
+
+STEP 4: Get Your URL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The deploy script will show you the URL.
+It looks like: https://classroom-addon-abc123-uc.a.run.app
+
+
+STEP 5: Update Email for Kelley
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Open: /Users/bedwards/auto-grader/SEND-TO-KELLEY.txt
+
+Replace this line:
+"or I can send you a direct link once it's published"
+
+With:
+"Here's the direct link: https://YOUR_CLOUD_RUN_URL/addon-discovery"
+
+
+STEP 6: Send to Kelley
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📧 Email: Copy text from SEND-TO-KELLEY.txt
+📎 Attach: classroom-auto-grader-extension.zip
+✅ Send!
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⏱️  Total Time: 15 minutes
+💰 Cost: $0/month (free tier)
+🎯 Result: Kelley gets all 3 tools working!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Auto-Grader</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="container">
+                <h1>Classroom Auto-Grader</h1>
+                <div id="auth-section">
+                    <button id="sign-in-btn" class="btn btn-primary">Sign in with Google</button>
+                    <div id="user-info" class="user-info hidden">
+                        <img id="user-avatar" class="avatar" alt="User avatar">
+                        <span id="user-name"></span>
+                        <button id="sign-out-btn" class="btn btn-secondary">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+
+            <div id="not-authenticated" class="message-box">
+                <h2>Welcome to Classroom Auto-Grader</h2>
+                <p>An AI-powered tool to automatically grade Google Classroom assignments with constructive feedback.</p>
+                <ul>
+                    <li>Generate rubrics and assignments with AI</li>
+                    <li>Auto-grade student submissions</li>
+                    <li>Provide constructive, grade-level feedback</li>
+                    <li>Supports all Google Classroom features</li>
+                </ul>
+                <p>Please sign in with your Google account to get started.</p>
+            </div>
+
+            <div id="main-content" class="hidden">
+                <nav class="tabs">
+                    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+                    <button class="tab-btn" data-tab="courses">Courses</button>
+                    <button class="tab-btn" data-tab="assignments">Assignments</button>
+                    <button class="tab-btn" data-tab="rubrics">Rubrics</button>
+                    <button class="tab-btn" data-tab="grading">Auto-Grade</button>
+                    <button class="tab-btn" data-tab="settings">Settings</button>
+                </nav>
+
+                <div class="tab-content">
+                    <div id="dashboard-tab" class="tab-pane active">
+                        <h2>Dashboard</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>Total Courses</h3>
+                                <p class="stat-number" id="total-courses">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Active Assignments</h3>
+                                <p class="stat-number" id="active-assignments">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Submissions to Grade</h3>
+                                <p class="stat-number" id="pending-submissions">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Rubrics Created</h3>
+                                <p class="stat-number" id="total-rubrics">0</p>
+                            </div>
+                        </div>
+                        <div class="recent-activity">
+                            <h3>Recent Activity</h3>
+                            <div id="recent-activity-list"></div>
+                        </div>
+                    </div>
+
+                    <div id="courses-tab" class="tab-pane">
+                        <h2>Your Courses</h2>
+                        <div id="courses-list"></div>
+                    </div>
+
+                    <div id="assignments-tab" class="tab-pane">
+                        <h2>Assignments</h2>
+                        <div class="action-bar">
+                            <button class="btn btn-primary" id="generate-assignment-btn">Generate Assignment with AI</button>
+                        </div>
+                        <div id="assignments-list"></div>
+                    </div>
+
+                    <div id="rubrics-tab" class="tab-pane">
+                        <h2>Rubrics</h2>
+                        <div class="action-bar">
+                            <button class="btn btn-primary" id="generate-rubric-btn">Generate Rubric with AI</button>
+                            <button class="btn btn-secondary" id="create-rubric-btn">Create Manual Rubric</button>
+                        </div>
+                        <div id="rubrics-list"></div>
+                    </div>
+
+                    <div id="grading-tab" class="tab-pane">
+                        <h2>Auto-Grade Submissions</h2>
+                        <div class="grading-panel">
+                            <div class="select-container">
+                                <label for="course-select">Select Course:</label>
+                                <select id="course-select" class="select-input">
+                                    <option value="">Choose a course...</option>
+                                </select>
+                            </div>
+                            <div class="select-container">
+                                <label for="assignment-select">Select Assignment:</label>
+                                <select id="assignment-select" class="select-input" disabled>
+                                    <option value="">Choose an assignment...</option>
+                                </select>
+                            </div>
+                            <div class="ai-options">
+                                <h3>AI Grading Options</h3>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="use-gemini" checked>
+                                    Use Gemini AI (advanced, slower)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="use-phi2">
+                                    Use Phi-2 (faster, lightweight)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="constructive-feedback" checked>
+                                    Generate constructive feedback
+                                </label>
+                            </div>
+                            <button id="start-grading-btn" class="btn btn-primary btn-large" disabled>
+                                Start Auto-Grading
+                            </button>
+                        </div>
+                        <div id="grading-progress" class="grading-progress hidden">
+                            <h3>Grading Progress</h3>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="grading-progress-fill"></div>
+                            </div>
+                            <p id="grading-status">Processing...</p>
+                            <div id="grading-results"></div>
+                        </div>
+                    </div>
+
+                    <div id="settings-tab" class="tab-pane">
+                        <h2>Settings</h2>
+                        <div class="settings-section">
+                            <h3>Authentication</h3>
+                            <div class="form-group">
+                                <label for="google-client-id">Google OAuth Client ID:</label>
+                                <input type="text" id="google-client-id" class="text-input" placeholder="your-client-id.apps.googleusercontent.com" required>
+                                <small>Create OAuth credentials at <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a></small>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h3>AI Configuration</h3>
+                            <div class="form-group">
+                                <label for="gemini-api-key">Gemini API Key:</label>
+                                <input type="password" id="gemini-api-key" class="text-input" placeholder="Your Gemini API key">
+                                <small>Get your key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
+                            </div>
+                            <div class="form-group">
+                                <label for="cloudflare-worker-url">Cloudflare Worker URL:</label>
+                                <input type="text" id="cloudflare-worker-url" class="text-input" placeholder="https://your-worker.workers.dev">
+                                <small>Deploy the worker with: npm run worker:deploy</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="default-ai-model">Default AI Model:</label>
+                                <select id="default-ai-model" class="select-input">
+                                    <option value="gemini">Gemini (Google)</option>
+                                    <option value="phi2">Phi-2 (Cloudflare)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <h3>Grading Preferences</h3>
+                            <div class="form-group">
+                                <label for="feedback-detail">Feedback Detail Level:</label>
+                                <select id="feedback-detail" class="select-input">
+                                    <option value="concise">Concise</option>
+                                    <option value="detailed" selected>Detailed</option>
+                                    <option value="comprehensive">Comprehensive</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="auto-return" checked>
+                                    Automatically return graded assignments to students
+                                </label>
+                            </div>
+                        </div>
+                        <button id="save-settings-btn" class="btn btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 Classroom Auto-Grader | Powered by Gemini AI & Cloudflare Workers</p>
+            </div>
+        </footer>
+    </div>
+
+    <script type="module" src="/src/app.js"></script>
+</body>
+</html>

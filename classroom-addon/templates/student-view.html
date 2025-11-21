@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Submit Your Work</h1>
+<p>Enter your response below to receive AI-powered feedback</p>
+
+<form id="submissionForm">
+    <div class="form-group">
+        <label for="submission">Your Answer:</label>
+        <textarea id="submission" name="submission" rows="10" placeholder="Type your answer here..."></textarea>
+    </div>
+    
+    <button type="submit" class="button">Submit for Grading</button>
+    <button type="button" class="button secondary" onclick="closeAddonIframe()">Cancel</button>
+</form>
+
+<div id="loading" class="loading" style="display: none;">
+    <div class="spinner"></div>
+    <p>AI is grading your work...</p>
+</div>
+
+<div id="result" style="display: none;">
+    <h2>Your Grade</h2>
+    <div id="gradeDisplay" class="message success"></div>
+    
+    <h2>Feedback</h2>
+    <div id="feedbackDisplay" class="message info"></div>
+    
+    <h2>Strengths</h2>
+    <ul id="strengthsList" style="margin: 10px 0; padding-left: 20px;"></ul>
+    
+    <h2>Areas for Improvement</h2>
+    <ul id="improvementsList" style="margin: 10px 0; padding-left: 20px;"></ul>
+    
+    <button class="button" onclick="closeAddonIframe()">Done</button>
+</div>
+
+<script>
+const itemId = '{{ item_id }}';
+const attachmentId = '{{ attachment_id }}';
+const submissionId = '{{ submission_id }}';
+
+document.getElementById('submissionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submission = document.getElementById('submission').value;
+    if (!submission.trim()) {
+        alert('Please enter your answer before submitting');
+        return;
+    }
+    
+    // Show loading
+    document.getElementById('submissionForm').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    
+    try {
+        const response = await fetch('/api/grade', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                submission,
+                rubric: {},  // Will be fetched from attachment data
+                grade_level: 'high school'
+            })
+        });
+        
+        if (!response.ok) throw new Error('Grading failed');
+        
+        const result = await response.json();
+        
+        // Hide loading, show results
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        
+        // Display grade
+        document.getElementById('gradeDisplay').innerHTML = 
+            `<strong>Score: ${result.grade}/100</strong>`;
+        
+        // Display feedback
+        document.getElementById('feedbackDisplay').textContent = result.feedback;
+        
+        // Display strengths
+        const strengthsList = document.getElementById('strengthsList');
+        strengthsList.innerHTML = '';
+        result.strengths.forEach(strength => {
+            const li = document.createElement('li');
+            li.textContent = strength;
+            strengthsList.appendChild(li);
+        });
+        
+        // Display improvements
+        const improvementsList = document.getElementById('improvementsList');
+        improvementsList.innerHTML = '';
+        result.improvements.forEach(improvement => {
+            const li = document.createElement('li');
+            li.textContent = improvement;
+            improvementsList.appendChild(li);
+        });
+        
+    } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        alert(`Error: ${error.message}`);
+        document.getElementById('submissionForm').style.display = 'block';
+    }
+});
+
+function closeAddonIframe() {
+    window.parent.postMessage({
+        type: 'Classroom',
+        action: 'closeIframe',
+    }, '*');
+}
+</script>
+{% endblock %}
