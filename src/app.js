@@ -22,7 +22,10 @@ class AutoGraderApp {
         // Check if user is already signed in
         const isSignedIn = await this.auth.checkAuth();
         if (isSignedIn) {
+            console.log('✓ User already authenticated');
             await this.handleSignIn();
+        } else {
+            console.log('ℹ User not authenticated');
         }
     }
 

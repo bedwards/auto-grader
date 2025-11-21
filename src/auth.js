@@ -105,6 +105,15 @@ export class GoogleAuth {
     }
 
     async checkAuth() {
+        // Check for demo mode (for testing)
+        const demoMode = localStorage.getItem('DEMO_MODE');
+        if (demoMode === 'true') {
+            this.accessToken = 'demo_token';
+            this.currentUser = JSON.parse(localStorage.getItem('mockUser') || '{"name":"Demo User","email":"demo@test.com","picture":""}');
+            console.log('✓ Demo mode enabled');
+            return true;
+        }
+        
         // Check if there's a valid token in session storage
         const savedToken = sessionStorage.getItem('googleAccessToken');
         if (savedToken) {
