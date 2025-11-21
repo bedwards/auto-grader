@@ -15,6 +15,8 @@ export default {
         return await handleGrading(request, env);
       } else if (path === '/generate' && request.method === 'POST') {
         return await handleGeneration(request, env);
+      } else if (path === '/gemini' && request.method === 'POST') {
+        return await handleGemini(request, env);
       } else if (path === '/health') {
         return jsonResponse({ status: 'ok', timestamp: new Date().toISOString() });
       } else {
@@ -89,6 +91,62 @@ async function handleGeneration(request, env) {
     response: aiResponse,
     model: model
   }, 200, true);
+}
+
+async function handleGemini(request, env) {
+  const { prompt, systemPrompt, temperature = 0.7 } = await request.json();
+
+  if (!prompt) {
+    return jsonResponse({ error: 'Prompt is required' }, 400);
+  }
+
+  if (!env.GEMINI_API_KEY) {
+    return jsonResponse({ error: 'Gemini API key not configured' }, 500);
+  }
+
+  // Call Google Gemini API
+  // Using gemini-2.5-flash as the stable model
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+  
+  const payload = {
+    contents: [{
+      parts: [{
+        text: systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt
+      }]
+    }],
+    generationConfig: {
+      temperature: temperature,
+      maxOutputTokens: 2048,
+    }
+  };
+
+  try {
+    const response = await fetch(geminiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Gemini API error:', error);
+      return jsonResponse({ error: 'Gemini API request failed', details: error }, response.status, true);
+    }
+
+    const data = await response.json();
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    return jsonResponse({
+      success: true,
+      response: aiResponse,
+      model: 'gemini-pro'
+    }, 200, true);
+  } catch (error) {
+    console.error('Gemini request error:', error);
+    return jsonResponse({ error: error.message }, 500, true);
+  }
 }
 
 function handleCORS() {

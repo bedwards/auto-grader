@@ -1,25 +1,16 @@
 // Extension popup logic
+// Worker URL is hardcoded - no need for user configuration
+const WORKER_URL = 'https://classroom-auto-grader.brian-mabry-edwards.workers.dev';
+
 document.addEventListener('DOMContentLoaded', async () => {
     // Load saved settings
     const settings = await chrome.storage.sync.get([
-        'workerUrl',
-        'geminiKey',
-        'useGemini',
-        'usePhi2',
+        'aiModel',
         'constructiveFeedback'
     ]);
 
-    if (settings.workerUrl) {
-        document.getElementById('worker-url').value = settings.workerUrl;
-    }
-    if (settings.geminiKey) {
-        document.getElementById('gemini-key').value = settings.geminiKey;
-    }
-    if (settings.useGemini !== undefined) {
-        document.getElementById('use-gemini').checked = settings.useGemini;
-    }
-    if (settings.usePhi2 !== undefined) {
-        document.getElementById('use-phi2').checked = settings.usePhi2;
+    if (settings.aiModel) {
+        document.getElementById('ai-model').value = settings.aiModel;
     }
     if (settings.constructiveFeedback !== undefined) {
         document.getElementById('constructive-feedback').checked = settings.constructiveFeedback;
@@ -28,10 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Save settings button
     document.getElementById('save-settings').addEventListener('click', async () => {
         const newSettings = {
-            workerUrl: document.getElementById('worker-url').value,
-            geminiKey: document.getElementById('gemini-key').value,
-            useGemini: document.getElementById('use-gemini').checked,
-            usePhi2: document.getElementById('use-phi2').checked,
+            aiModel: document.getElementById('ai-model').value,
             constructiveFeedback: document.getElementById('constructive-feedback').checked
         };
 

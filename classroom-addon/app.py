@@ -256,9 +256,18 @@ def api_create_attachment():
 
 if __name__ == "__main__":
     # Run with SSL for local testing
+    import os
+
+    port = int(os.environ.get("PORT", 5002))
+    ssl_context = None
+
+    # Only use SSL for local testing (not on Cloud Run)
+    if port < 8080:  # Local development
+        ssl_context = ("localhost.pem", "localhost-key.pem")
+
     app.run(
-        host="localhost",
-        port=5001,
-        ssl_context=("localhost.pem", "localhost-key.pem"),
-        debug=True,
+        host="0.0.0.0" if port >= 8080 else "localhost",
+        port=port,
+        ssl_context=ssl_context,
+        debug=port < 8080,
     )

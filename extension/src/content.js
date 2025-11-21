@@ -1,6 +1,9 @@
 // Content script that runs on Google Classroom pages
 console.log('Classroom Auto-Grader extension loaded');
 
+// Worker URL - hardcoded, API key is server-side
+const WORKER_URL = 'https://classroom-auto-grader.brian-mabry-edwards.workers.dev';
+
 // Add grading buttons to submissions page
 function injectGradingButtons() {
     // Check if we're on a student submission page
@@ -45,10 +48,7 @@ async function gradeSubmission(submissionElement) {
 
     // Get settings from storage
     const settings = await chrome.storage.sync.get([
-        'workerUrl',
-        'geminiKey',
-        'useGemini',
-        'usePhi2',
+        'aiModel',
         'constructiveFeedback'
     ]);
 
@@ -100,63 +100,40 @@ function extractSubmissionContent(element) {
 }
 
 async function performGrading(submissionText, settings) {
-    // Simple grading logic - in production, this would call the Cloudflare Worker
-    const prompt = `Grade this student submission and provide constructive feedback:\n\n${submissionText}`;
+    const systemPrompt = settings.constructiveFeedback 
+        ? 'You are an experienced educator providing fair and constructive grading. Provide a numerical grade (0-100) and detailed, encouraging feedback.'
+        : 'You are an experienced educator providing fair grading. Provide a numerical grade (0-100) and brief feedback.';
     
-    let result = { grade: null, feedback: '' };
+    const prompt = `Grade this student submission:\n\n${submissionText}\n\nProvide your response in this format:\nGRADE: [number]\nFEEDBACK: [your feedback]`;
     
-    // Try Gemini if enabled
-    if (settings.useGemini && settings.geminiKey) {
-        try {
-            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-goog-api-key': settings.geminiKey
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: prompt
-                        }]
-                    }]
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                const text = data.candidates[0]?.content?.parts[0]?.text || '';
-                result = parseGradingResponse(text);
-            }
-        } catch (error) {
-            console.error('Gemini error:', error);
+    const aiModel = settings.aiModel || 'gemini';
+    const endpoint = aiModel === 'gemini' ? '/gemini' : '/grade';
+    
+    try {
+        const body = aiModel === 'gemini' 
+            ? { prompt, systemPrompt }
+            : { prompt, model: '@cf/microsoft/phi-2' };
+        
+        const response = await fetch(`${WORKER_URL}${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.statusText}`);
         }
+        
+        const data = await response.json();
+        const text = data.response || '';
+        return parseGradingResponse(text);
+        
+    } catch (error) {
+        console.error('Grading error:', error);
+        throw error;
     }
-    
-    // Fallback to Phi-2
-    if (!result.grade && settings.usePhi2 && settings.workerUrl) {
-        try {
-            const response = await fetch(`${settings.workerUrl}/grade`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    prompt,
-                    model: '@cf/microsoft/phi-2'
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                result = parseGradingResponse(data.response);
-            }
-        } catch (error) {
-            console.error('Phi-2 error:', error);
-        }
-    }
-    
-    return result;
 }
 
 function parseGradingResponse(text) {

@@ -102,27 +102,11 @@
     <h2>Classroom Auto-Grader</h2>
     
     <div class="section">
-        <label for="worker-url">Cloudflare Worker URL:</label>
-        <input type="text" id="worker-url" placeholder="https://your-worker.workers.dev">
-    </div>
-
-    <div class="section">
-        <label for="gemini-key">Gemini API Key (optional):</label>
-        <input type="text" id="gemini-key" placeholder="Your Gemini API key">
-    </div>
-
-    <div class="section">
-        <label>AI Model:</label>
-        <div class="checkbox-group">
-            <label class="checkbox-label">
-                <input type="checkbox" id="use-gemini" checked>
-                Use Gemini AI
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" id="use-phi2">
-                Use Phi-2 (Cloudflare)
-            </label>
-        </div>
+        <label for="ai-model">AI Model:</label>
+        <select id="ai-model">
+            <option value="gemini" selected>Gemini AI (Recommended)</option>
+            <option value="phi2">Phi-2 (Cloudflare)</option>
+        </select>
     </div>
 
     <div class="section">
