@@ -1,0 +1,19 @@
+Subject: I built you a teaching assistant (and it never asks for coffee breaks)
+
+Hey Kelley,
+
+Remember how you said grading essays makes you want to throw your laptop out the window? I fixed that. Built you an AI that actually reads student work, gives constructive feedback, and suggests grades based on your rubric. You just review and click "approve." Takes 30 seconds instead of 30 minutes per essay.
+
+Three ways to use it:
+1. **Web dashboard**: https://bedwards.github.io/auto-grader/ (live now, sign in with Google)
+2. **Chrome extension**: Attached—drag into chrome://extensions and it adds grading buttons to Classroom
+3. **Classroom add-on**: https://classroom-addon-6l2ikjrv3q-uc.a.run.app/addon-discovery (click to preview what students/teachers see)
+
+Best part? You don't configure anything. It uses my API key, not yours. Zero setup. Just sign in and start grading.
+
+Want to beta test it? I'm buying the coffee this time. ☕
+
+— Mr. Edwards  
+(Yes, I actually deployed this. No, I'm not just talking about it. Click the links.)
+
+P.S. — The AI gave my test essay an 85/100 with feedback like "Great work overall! Consider providing more specific examples." Not bad for a robot.
