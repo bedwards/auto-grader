@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<p>{{ message }}</p>
+
+<div class="message info">
+    <strong>AI-Powered Auto-Grading</strong><br>
+    This add-on uses Gemini AI to automatically grade student submissions with constructive, grade-level appropriate feedback.
+</div>
+
+<h2>Features</h2>
+<ul style="margin: 20px 0; padding-left: 20px;">
+    <li>Automatic grading with AI</li>
+    <li>Grade-level appropriate feedback</li>
+    <li>Detailed rubric-based assessment</li>
+    <li>Instant feedback for students</li>
+    <li>Time-saving for teachers</li>
+</ul>
+
+<h2>Get Started</h2>
+<p>Click below to sign in and create your first auto-graded assignment.</p>
+
+<button class="button" onclick="signIn()">Sign In with Google</button>
+<button class="button secondary" onclick="closeAddonIframe()">Close</button>
+
+<script>
+function signIn() {
+    const loginHint = '{{ login_hint }}';
+    window.location.href = `/authorize?login_hint=${encodeURIComponent(loginHint)}`;
+}
+
+function closeAddonIframe() {
+    window.parent.postMessage({
+        type: 'Classroom',
+        action: 'closeIframe',
+    }, '*');
+}
+</script>
+{% endblock %}

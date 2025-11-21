@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<p>{{ message }}</p>
+
+<div class="message success">
+    <strong>Welcome to AI Auto-Grader!</strong><br>
+    Our Google Classroom Add-on helps teachers save time with AI-powered grading.
+</div>
+
+<h2>How It Works</h2>
+<ol style="margin: 20px 0; padding-left: 30px;">
+    <li>Install the add-on from Google Workspace Marketplace</li>
+    <li>Create an assignment in Google Classroom</li>
+    <li>Attach the AI Auto-Grader to your assignment</li>
+    <li>Students submit their work</li>
+    <li>AI automatically grades and provides feedback</li>
+    <li>Review and approve grades with one click</li>
+</ol>
+
+<h2>Features</h2>
+<ul style="margin: 20px 0; padding-left: 30px;">
+    <li><strong>Instant Grading:</strong> AI grades submissions immediately</li>
+    <li><strong>Constructive Feedback:</strong> Grade-level appropriate comments</li>
+    <li><strong>Rubric-Based:</strong> Define your own grading criteria</li>
+    <li><strong>Teacher Override:</strong> Review and adjust any grade</li>
+    <li><strong>Time-Saving:</strong> Reduce grading time by 80%</li>
+</ul>
+
+<a href="/addon-discovery" class="button">Get Started</a>
+<button class="button secondary" onclick="window.close()">Close</button>
+
+{% endblock %}

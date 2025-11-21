@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Review Student Work</h1>
+<p>View AI-generated grades and provide additional feedback</p>
+
+<div class="message info">
+    <strong>Student Submission ID:</strong> {{ submission_id }}
+</div>
+
+<h2>Student Work</h2>
+<div id="studentWork" style="background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 15px 0;">
+    <p style="color: #666; font-style: italic;">Loading submission...</p>
+</div>
+
+<h2>AI-Generated Grade</h2>
+<div id="aiGrade" class="message success">
+    <strong>Score: --/100</strong>
+</div>
+
+<h2>AI Feedback</h2>
+<div id="aiFeedback" style="background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 15px 0;">
+    <p style="color: #666; font-style: italic;">Loading feedback...</p>
+</div>
+
+<h2>Override or Add Comments</h2>
+<form id="gradeForm">
+    <div class="form-group">
+        <label for="overrideGrade">Manual Grade (optional):</label>
+        <input type="number" id="overrideGrade" name="overrideGrade" min="0" max="100" placeholder="Leave blank to use AI grade">
+    </div>
+    
+    <div class="form-group">
+        <label for="teacherComments">Additional Teacher Comments:</label>
+        <textarea id="teacherComments" name="teacherComments" rows="5" placeholder="Add any additional feedback for the student..."></textarea>
+    </div>
+    
+    <button type="submit" class="button">Save & Return Grade</button>
+    <button type="button" class="button secondary" onclick="closeAddonIframe()">Cancel</button>
+</form>
+
+<script>
+const itemId = '{{ item_id }}';
+const attachmentId = '{{ attachment_id }}';
+const submissionId = '{{ submission_id }}';
+
+// Load student work and AI grade (placeholder - would fetch from API)
+document.addEventListener('DOMContentLoaded', () => {
+    // This would normally fetch from your API
+    document.getElementById('studentWork').innerHTML = '<p>This is a placeholder for the student\'s submission. In production, this would be fetched from the Classroom API.</p>';
+    document.getElementById('aiGrade').innerHTML = '<strong>Score: 85/100</strong>';
+    document.getElementById('aiFeedback').innerHTML = '<p>Great work overall! You demonstrated a strong understanding of the core concepts. Consider providing more specific examples to support your arguments.</p>';
+});
+
+document.getElementById('gradeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const overrideGrade = document.getElementById('overrideGrade').value;
+    const teacherComments = document.getElementById('teacherComments').value;
+    
+    // Would send grade back to Classroom
+    alert('Grade would be returned to Classroom here');
+    closeAddonIframe();
+});
+
+function closeAddonIframe() {
+    window.parent.postMessage({
+        type: 'Classroom',
+        action: 'closeIframe',
+    }, '*');
+}
+</script>
+{% endblock %}
