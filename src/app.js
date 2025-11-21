@@ -94,12 +94,17 @@ class AutoGraderApp {
         // Initialize Classroom API with auth
         this.classroom.setAuth(this.auth);
         
-        // Load dashboard data
-        await this.loadDashboard();
-        
-        // Show main content
+        // Show main content FIRST
         document.getElementById('not-authenticated').classList.add('hidden');
         document.getElementById('main-content').classList.remove('hidden');
+        
+        // Load dashboard data (skip in demo mode to avoid API errors)
+        const demoMode = localStorage.getItem('DEMO_MODE') === 'true';
+        if (!demoMode) {
+            await this.loadDashboard();
+        } else {
+            console.log('📸 Demo mode: Skipping dashboard data load');
+        }
     }
 
     signOut() {
@@ -127,6 +132,14 @@ class AutoGraderApp {
     }
 
     async loadTabData(tabName) {
+        const demoMode = localStorage.getItem('DEMO_MODE') === 'true';
+        
+        // In demo mode, skip loading data for tabs that require API calls
+        if (demoMode && ['dashboard', 'courses', 'assignments', 'rubrics', 'grading'].includes(tabName)) {
+            console.log(`📸 Demo mode: Skipping ${tabName} data load`);
+            return;
+        }
+        
         this.ui.showLoading();
         try {
             switch (tabName) {
