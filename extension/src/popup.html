@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Auto-Grader</title>
+    <style>
+        body {
+            width: 350px;
+            padding: 15px;
+            font-family: 'Google Sans', Arial, sans-serif;
+            margin: 0;
+        }
+        h2 {
+            color: #1a73e8;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .section {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+        .button {
+            width: 100%;
+            padding: 10px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #1557b0;
+        }
+        .button:disabled {
+            background-color: #dadce0;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: none;
+        }
+        .status.success {
+            background-color: #e6f4ea;
+            color: #137333;
+            border: 1px solid #34a853;
+        }
+        .status.error {
+            background-color: #fce8e6;
+            color: #c5221f;
+            border: 1px solid #ea4335;
+        }
+        .status.info {
+            background-color: #e8f0fe;
+            color: #185abc;
+            border: 1px solid #1a73e8;
+        }
+        .link {
+            color: #1a73e8;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Classroom Auto-Grader</h2>
+    
+    <div class="section">
+        <label for="worker-url">Cloudflare Worker URL:</label>
+        <input type="text" id="worker-url" placeholder="https://your-worker.workers.dev">
+    </div>
+
+    <div class="section">
+        <label for="gemini-key">Gemini API Key (optional):</label>
+        <input type="text" id="gemini-key" placeholder="Your Gemini API key">
+    </div>
+
+    <div class="section">
+        <label>AI Model:</label>
+        <div class="checkbox-group">
+            <label class="checkbox-label">
+                <input type="checkbox" id="use-gemini" checked>
+                Use Gemini AI
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" id="use-phi2">
+                Use Phi-2 (Cloudflare)
+            </label>
+        </div>
+    </div>
+
+    <div class="section">
+        <label class="checkbox-label">
+            <input type="checkbox" id="constructive-feedback" checked>
+            Generate constructive feedback
+        </label>
+    </div>
+
+    <button class="button" id="save-settings">Save Settings</button>
+    <button class="button" id="grade-current">Grade Current Page</button>
+
+    <div id="status" class="status"></div>
+
+    <div style="margin-top: 15px; text-align: center;">
+        <a href="#" id="open-dashboard" class="link">Open Full Dashboard</a>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

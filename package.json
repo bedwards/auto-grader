@@ -1,0 +1,21 @@
+{
+  "name": "classroom-auto-grader",
+  "version": "1.0.0",
+  "description": "AI-powered auto-grader for Google Classroom with Chrome extension and web dashboard",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "./scripts/deploy-worker.sh",
+    "setup": "./scripts/setup-credentials.sh"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "googleapis": "^144.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11",
+    "wrangler": "^3.87.0"
+  }
+}
